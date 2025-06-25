@@ -61,7 +61,7 @@ export default function Goals () {
         renderItem={({ item }) => (
           <GoalItem 
             goal={item} 
-            onToggle={() => toggleGoal(item.id)} 
+            onToggle={() => toggleGoal(item.id, item.completed)} 
             onDelete={() => handleDeleteGoal(item.id)} 
           />
         )}

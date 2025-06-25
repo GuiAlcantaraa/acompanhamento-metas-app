@@ -9,18 +9,13 @@
   ],
   "goals": [
     {
-      "id": "b39f",
-      "title": "comer",
-      "completed": false
-    },
-    {
       "id": "7686",
       "title": "comprar um carro",
-      "completed": false
+      "completed": true
     },
     {
-      "id": "e4bb",
-      "title": "comprar uma casa",
+      "id": "0d52",
+      "title": "andar",
       "completed": false
     }
   ]

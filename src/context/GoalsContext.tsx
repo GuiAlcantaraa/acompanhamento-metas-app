@@ -11,7 +11,7 @@ export type Goal = {
 type GoalsContextType = {
   goals: Goal[];
   addGoal: (title: string) => void;
-  toggleGoal: (id: string) => void;
+  toggleGoal: (id: string, status: boolean) => void;
   deleteGoal: (id: string) => void;
   getGoals: () => Promise<void>;
 };
@@ -22,35 +22,55 @@ export const GoalsProvider = ({ children }: { children: ReactNode }) => {
   const [goals, setGoals] = useState<Goal[]>([]);
 
   const addGoal = async (title: string) => {
-    const { data } = await api.post('/goals', {
-      title,
-      completed: false,
-    });
+    try {
+      const { data } = await api.post('/goals', {
+            title,
+            completed: false,
+      });
 
-    console.log("data", data)
+      setGoals(prev => [...prev, data]); 
 
-    setGoals(prev => [...prev, data]); 
+      }catch(error){
+        console.error("Erro ao cadastrar meta:", error);
+      }
   };
 
   const getGoals = async () => {
-    const { data } = await api.get('/goals');
+    try {
+      const { data } = await api.get('/goals');
 
-    setGoals(data); 
-  }
-
-  const toggleGoal = (id: string) => {
-    setGoals(prev =>
-      prev.map(goal =>
-        goal.id === id ? { ...goal, completed: !goal.completed } : goal
-      )
-    );
+      setGoals(data);  
+      
+      }catch(error){
+       console.error("Erro ao buscar metas:", error);
+     }
   };
 
- const deleteGoal = async (id: string) => {
-  await api.delete(`/goals/${id}`);
+ const toggleGoal = async (id: string, status: boolean) => {
+  try {
+    const { data: updatedGoal } = await api.patch(`/goals/${id}`, {
+      completed: !status,
+    });
 
-  setGoals(prev => prev.filter(goal => goal.id !== id));
- };
+    setGoals(prev =>
+      prev.map(goal =>
+        goal.id === id ? { ...goal, ...updatedGoal } : goal
+      )
+    );
+  } catch (error) {
+    console.error("Erro ao atualizar a meta:", error);
+  }
+};
+
+ const deleteGoal = async (id: string) => {
+  try {
+    await api.delete(`/goals/${id}`);
+
+    setGoals(prev => prev.filter(goal => goal.id !== id));
+  } catch (error) {
+    console.error("Erro ao deletar meta:", error);
+  }
+};
 
   return (
     <GoalsContext.Provider value={{ goals, addGoal, toggleGoal, deleteGoal, getGoals }}>
